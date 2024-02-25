@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+  api:
+    stop_grace_period: 1s
+    build:
+      dockerfile: Dockerfile
+      target: production
+      context: .
+    healthcheck:
+#      todo right becomes unhealthy but endpoint path exist in the app 
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8080/health", ">", "/var/log/healthcheck.log", "||", "exit", "1" ]
+      timeout: 5s
+      retries: 1
+    ports:
+      - "8080:8080"
