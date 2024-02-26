@@ -1,11 +1,14 @@
+using backend.Data;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHealthChecks();
+string? connectionStrings = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<StoreContext>((options)=> options.UseNpgsql(connectionStrings));
 
-// Add services to the container.
+builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {

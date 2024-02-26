@@ -1,19 +1,28 @@
+using System.Net;
+using backend.Data;
+using backend.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
 [ApiController, Route("api/[controller]")]
-public class ProductsController
+public class ProductsController(StoreContext storeContext): ControllerBase
 {
     [HttpGet("")]
-    public string getProducts()
+    public async Task<ActionResult<List<Product>>> GetProducts()
     {
-        return "Here will be list of products";
+        List<Product> products = await storeContext.Products.ToListAsync();
+        return Ok(products);
     }
 
     [HttpGet("{id}")]
-    public string getProduct(int id)
+    public async Task<ActionResult<Product>> GetProduct(int id)
     {
-        return $"Here will product with id: {id}";
+        Product? product = await storeContext.Products.FindAsync(id);
+
+        if (product is null) return NotFound();
+        
+        return Ok(product);
     }
 }

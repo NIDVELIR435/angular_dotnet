@@ -8,6 +8,7 @@ public class IndexController(ILogger<IndexController> logger) : Controller
     [HttpGet()]
     public IActionResult Index()
     {
+        logger.LogDebug("Health Check invoked");
         return Ok("Ok");
     }
 }
