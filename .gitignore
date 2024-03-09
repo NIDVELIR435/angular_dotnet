@@ -1,6 +1,6 @@
 .idea/
-backend/bin/
-backend/obj/
+backend/bin/*
+backend/obj/*
 backend/bin-debug/
 backend/obj-debug/
 backend/*.user
