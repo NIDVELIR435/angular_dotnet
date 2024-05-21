@@ -14,7 +14,7 @@ public class Product : IdEntity
     
     public int ProductTypeId { get; set; }
     
-    public ProductBrand ProductBrand { get; set; }
+    public Brand Brand { get; set; }
     
     public int ProductBrandId { get; set; }
 }

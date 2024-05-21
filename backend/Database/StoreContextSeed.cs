@@ -16,14 +16,14 @@ public class StoreContextSeed
 
     private static async Task SeedBrands(StoreContext context)
     {
-        if (!context.ProductsBrands.Any())
+        if (!context.Brands.Any())
         {
             string brandsData = await File.ReadAllTextAsync($"{SeedFolderPath}/brands.json");
-            List<ProductBrand> brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData)!;
+            List<Brand> brands = JsonSerializer.Deserialize<List<Brand>>(brandsData)!;
 
             foreach (var brand in brands)
             {
-                context.ProductsBrands.Add(brand);
+                context.Brands.Add(brand);
             }
 
             await context.SaveChangesAsync();

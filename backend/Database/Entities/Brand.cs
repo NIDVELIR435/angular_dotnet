@@ -1,6 +1,6 @@
 namespace backend.Entities;
 
-public class ProductBrand : IdEntity
+public class Brand : IdEntity
 {
     public string Name { get; set; }
 }

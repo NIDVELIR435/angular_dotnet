@@ -1,51 +1,53 @@
+using backend.Data;
 using backend.Entities;
 using backend.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.Data.Repositories;
+namespace backend.Database.Repositories;
 
-public class ProductRepository(StoreContext storeContext) : IProductRepository
+public class ProductRepository(StoreContext storeContext) : IRepository<Product>
 {
-    public async Task<IReadOnlyList<Product>> GetProductAsync()
+    private DbSet<Product> dbSet = storeContext.Products;
+    
+    public async Task<IReadOnlyList<Product>> GetAllAsync()
     {
-        return  await storeContext.Products.ToListAsync();
+        return await dbSet.ToListAsync();
     }
 
-    public async Task<Product> CreateProductAsync(Product productDto)
-    {
-        Product? product = await storeContext.Products
-            .FirstOrDefaultAsync(p => p.Name == productDto.Name);
-        if (product is not null)  throw new Exception("Product already exist");
 
-        storeContext.Products.Add(productDto);
+    public async Task<Product> CreateAsync(Product dto)
+    {
+        Product? product = await dbSet.FirstOrDefaultAsync(p => p.Name == dto.Name);
+        if (product is not null) throw new Exception("Product already exist");
+
+        dbSet.Add(dto);
         await storeContext.SaveChangesAsync();
 
-        return await storeContext.Products
-            .Where(p => p.Name == productDto.Name)
+        return await dbSet.Where(p => p.Name == dto.Name)
             .FirstAsync();
     }
 
-    public async Task<Product?> GetProductByIdAsync(int id)
+    public async Task<Product?> GetByIdAsync(int id)
     {
-        return await storeContext.Products.FindAsync(id);
+        return await dbSet.FindAsync(id);
     }
 
-    public async Task<Product?> UpdateProductAsync(int id, Product productDto)
+    public async Task<Product?> UpdateByIdAsync(int id, Product productDto)
     {
-        Product? product = await storeContext.Products.FindAsync(id);
+        Product? product = await dbSet.FindAsync(id);
         if (product is null) throw new Exception($"Product with id {id} does not exist.");
 
         product.Name = productDto.Name;
         await storeContext.SaveChangesAsync();
-        return await GetProductByIdAsync(id);
+        return await GetByIdAsync(id);
     }
 
-    public async Task DeleteProductByIdAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
-        Product? product = await storeContext.Products.FindAsync(id);
+        Product? product = await dbSet.FindAsync(id);
         if (product is null) throw new Exception($"Product with id {id} does not exist.");
 
-        storeContext.Products.Remove(product);
+        dbSet.Remove(product);
         await storeContext.SaveChangesAsync();
     }
 }

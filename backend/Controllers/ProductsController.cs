@@ -1,3 +1,4 @@
+using backend.Controllers.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using backend.Entities;
 using backend.Interfaces;
@@ -5,42 +6,42 @@ using backend.Interfaces;
 namespace backend.Controllers;
 
 [ApiController, Route("api/[controller]")]
-public class ProductsController(IProductRepository productRepository) : ControllerBase
+public class ProductsController(IRepository<Product> repository) : ControllerBase, ICrudBase<Product>
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts()
+    public async Task<ActionResult<IReadOnlyList<Product>>> GetAll()
     {
-        IReadOnlyList<Product> products = await productRepository.GetProductAsync();
+        IReadOnlyList<Product> products = await repository.GetAllAsync();
 
         return Ok(products);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateProduct([FromBody] Product productDto)
+    public async Task<ActionResult> Create([FromBody] Product dto)
     {
-        await productRepository.CreateProductAsync(productDto);
+        await repository.CreateAsync(dto);
 
         return Created();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProduct(int id)
+    public async Task<ActionResult<Product>> Get(int id)
     {
-        Product? product = await productRepository.GetProductByIdAsync(id);
+        Product? product = await repository.GetByIdAsync(id);
         return Ok(product);
     }
 
     [HttpPatch("{id}")]
-    public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] Product productDto)
+    public async Task<ActionResult<Product>> Update(int id, [FromBody] Product productDto)
     {
-        await productRepository.UpdateProductAsync(id, productDto);
+        await repository.UpdateByIdAsync(id, productDto);
         return Ok();
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteProduct(int id)
+    public async Task<ActionResult> Delete(int id)
     {
-        await productRepository.DeleteProductByIdAsync(id);
+        await repository.DeleteByIdAsync(id);
         return Ok();
     }
 }
