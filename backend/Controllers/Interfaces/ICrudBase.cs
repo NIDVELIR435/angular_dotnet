@@ -1,8 +1,9 @@
+using backend.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers.Interfaces;
 
-public interface ICrudBase<TEntity>
+public interface ICrudBase<TEntity> where TEntity : IdEntity
 {
     Task<ActionResult<IReadOnlyList<TEntity>>> GetAll();
     Task<ActionResult> Create(TEntity dto);

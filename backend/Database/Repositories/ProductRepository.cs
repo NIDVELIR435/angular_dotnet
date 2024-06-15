@@ -7,11 +7,11 @@ namespace backend.Database.Repositories;
 
 public class ProductRepository(StoreContext storeContext) : IRepository<Product>
 {
-    private DbSet<Product> dbSet = storeContext.Products;
+    private readonly DbSet<Product> _dbSet = storeContext.Products;
 
     public async Task<IReadOnlyList<Product>> GetAllAsync()
     {
-        return await dbSet
+        return await _dbSet
             // includes relations so in our requests join will be attached  
             .Include(product => product.ProductType)
             .Include(product => product.Brand)
@@ -21,24 +21,24 @@ public class ProductRepository(StoreContext storeContext) : IRepository<Product>
 
     public async Task<Product> CreateAsync(Product dto)
     {
-        Product? product = await dbSet.FirstOrDefaultAsync(p => p.Name == dto.Name);
+        Product? product = await _dbSet.FirstOrDefaultAsync(p => p.Name == dto.Name);
         if (product is not null) throw new Exception("Product already exist");
 
-        dbSet.Add(dto);
+        _dbSet.Add(dto);
         await storeContext.SaveChangesAsync();
 
-        return await dbSet.Where(p => p.Name == dto.Name)
+        return await _dbSet.Where(p => p.Name == dto.Name)
             .FirstAsync();
     }
 
     public async Task<Product?> GetByIdAsync(int id)
     {
-        return await dbSet.FindAsync(id);
+        return await _dbSet.FindAsync(id);
     }
 
     public async Task<Product?> UpdateByIdAsync(int id, Product productDto)
     {
-        Product? product = await dbSet.FindAsync(id);
+        Product? product = await _dbSet.FindAsync(id);
         if (product is null) throw new Exception($"Product with id {id} does not exist.");
 
         product.Name = productDto.Name;
@@ -48,10 +48,10 @@ public class ProductRepository(StoreContext storeContext) : IRepository<Product>
 
     public async Task DeleteByIdAsync(int id)
     {
-        Product? product = await dbSet.FindAsync(id);
+        Product? product = await _dbSet.FindAsync(id);
         if (product is null) throw new Exception($"Product with id {id} does not exist.");
 
-        dbSet.Remove(product);
+        _dbSet.Remove(product);
         await storeContext.SaveChangesAsync();
     }
 }
