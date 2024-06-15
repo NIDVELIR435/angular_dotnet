@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
+using backend.Entities;
 
 namespace backend.Interfaces;
 
-public interface IRepository<TEntity>
+public interface IRepository<TEntity> where TEntity : IdEntity
 {
     Task<IReadOnlyList<TEntity>> GetAllAsync();
     Task<TEntity> CreateAsync(TEntity dto);

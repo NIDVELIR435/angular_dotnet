@@ -17,7 +17,7 @@ public class BrandRepository(StoreContext storeContext) : IRepository<Brand>
     public async Task<Brand> CreateAsync(Brand dto)
     {
         Brand? brand = await _dbSet.FirstOrDefaultAsync(p => p.Name == dto.Name);
-        if (brand is not null) throw new Exception("Brand already exist");
+        if (brand is not null) throw new BadHttpRequestException("Brand already exist");
 
         _dbSet.Add(dto);
         await storeContext.SaveChangesAsync();
