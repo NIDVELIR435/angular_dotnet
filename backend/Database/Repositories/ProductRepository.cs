@@ -8,10 +8,14 @@ namespace backend.Database.Repositories;
 public class ProductRepository(StoreContext storeContext) : IRepository<Product>
 {
     private DbSet<Product> dbSet = storeContext.Products;
-    
+
     public async Task<IReadOnlyList<Product>> GetAllAsync()
     {
-        return await dbSet.ToListAsync();
+        return await dbSet
+            // includes relations so in our requests join will be attached  
+            .Include(product => product.ProductType)
+            .Include(product => product.Brand)
+            .ToListAsync();
     }
 
 
